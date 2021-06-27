@@ -9,7 +9,7 @@ import Groups from '../components/Groups/index'
 import { TodoLabel, ProgressLabel, DoneLabel } from '../components/Label/index'
 import { navLinks } from '../constants/route'
 import { ContentViewContainer, TaskCardStyledWrapper } from '../style/index'
-import { GET_TASKS, CREATE_TASK, GET_USER, GET_GROUP } from '../graphql/gql'
+import { CREATE_TASK, GET_USER } from '../graphql/gql'
 
 import styled from 'styled-components'
 
@@ -186,11 +186,6 @@ export default function TaskListView() {
   const { data: userData, loading, error } = useQuery(GET_USER, {
     variables: { id: localStorage.getItem('userId') },
   })
-  // if (loading) return 'Loading...'
-  // if (error) {
-  //   window.alert(error)
-  // }
-  // const { tasks } = data
   if (loading) return 'Loading...'
   if (error) {
     window.alert(error)
@@ -204,8 +199,6 @@ export default function TaskListView() {
     [1]: [],
     [2]: []
   }
-
-
 
   taskGroups = {
     ...taskGroups,
@@ -246,19 +239,6 @@ export default function TaskListView() {
               </Col>
             ))
         }
-
-        {/* <Col>
-
-          <TaskCard title="title2" />
-          <PlusButton status={1} setModal={setModal} />
-        </Col>
-        <Col>
-          <DoneLabel>
-            Done
-          </DoneLabel>
-          <TaskCard title="title3" />
-          <PlusButton status={2} setModal={setModal} />
-        </Col> */}
       </ScrollContainer>
     </ContentViewContainer>
   )
