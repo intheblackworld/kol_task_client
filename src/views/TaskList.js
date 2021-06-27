@@ -1,12 +1,15 @@
 import { useState, useCallback } from 'react'
 import { useLocation } from 'react-router-dom'
+import { useMutation, useQuery } from "@apollo/client"
 import { Form, Input, Button, Select } from 'antd'
 import _ from 'lodash'
 
 import PageTitle from '../components/Page/Title'
+import Groups from '../components/Groups/index'
 import { TodoLabel, ProgressLabel, DoneLabel } from '../components/Label/index'
 import { navLinks } from '../constants/route'
-import { ContentViewContainer } from '../style/index'
+import { ContentViewContainer, TaskCardStyledWrapper } from '../style/index'
+import { GET_TASKS, CREATE_TASK, GET_USER, GET_GROUP } from '../graphql/gql'
 
 import styled from 'styled-components'
 
@@ -14,7 +17,7 @@ import '../style/variables.css'
 
 const { Option } = Select
 
-const ScrollContainer = styled.div`
+export const ScrollContainer = styled.div`
   width: 100%;
   overflow-x: scroll;
   padding-left: var(--app--space--26);
@@ -28,21 +31,7 @@ const Col = styled.div`
   padding-top: var(--app--space--4);
 `
 
-const TaskCardStyledWrapper = styled.div`
-    width: 100%;
-    height: 100px;
-    padding: var(--app--space--4);
-    border-radius: var(--app--space--2);
-    margin-bottom: var(--app--space--2);
-    box-shadow: rgb(15 15 15 / 10%) 0px 0px 0px 1px, rgb(15 15 15 / 10%) 0px 2px 4px;
-    font-size: 20px;
-    font-weight: bold;
-    color: #333;
-    cursor: pointer;
-    &:hover {
-      background-color: var(--app--color--gray-lightest);
-    }
-  `
+
 const TaskCard = (props) => {
   return (
     <TaskCardStyledWrapper>
@@ -66,50 +55,10 @@ const PlusButtonStyleWrapper = styled.div`
 `
 
 const PlusButton = (props) => {
-  console.log(props)
-  // const showTaskModal = (props) => {
-  //   // props.setModal(true)
-  //   console.log(props)
-  // }
-
   return (
     <PlusButtonStyleWrapper onClick={() => props.setModal(true)}>
       + New
     </PlusButtonStyleWrapper>
-  )
-}
-
-const GroupsStyleWrapper = styled.div`
-  font-size: 18px;
-  color: #000;
-  font-weight: bold;
-  display: flex;
-  align-items: center;
-  margin-top: var(--app--space--2);
-  margin-left: var(--app--space--26);
-`
-
-const GroupStyleWrapper = styled.div`
-  border: 1px solid #000;
-  padding: var(--app--space--1) var(--app--space--2);
-  border-radius: 999px;
-  font-size: 18px;
-  color: #000;
-  font-weight: bold;
-  margin-right: var(--app--space--4);
-  cursor: pointer;
-`
-const Groups = (props) => {
-  return (
-    <GroupsStyleWrapper>
-      所屬組合：
-      {props.groups && props.groups.map(g => (
-          <GroupStyleWrapper>
-            {g.name}
-          </GroupStyleWrapper>
-        ))
-      }
-    </GroupsStyleWrapper>
   )
 }
 
@@ -144,12 +93,23 @@ const Modal = (props) => {
   const [inputs, setInputs] = useState('')
 
   const onChangeHandler = useCallback(
-    ({ target: { id, value } }) => setInputs(state => ({ ...state, [id]: value }), [])
-  )
+    (e) => {
+      if (!e.target) {
+        setInputs(state => ({ ...state, status: e }))
+      } else {
+        setInputs(state => ({ ...state, [e.target.id]: e.target.value }))
+      }
+    }, [])
 
-  const addTask = () => {
-    props.setModal(false)
-  }
+  const [addTask, { loading, error }] = useMutation(CREATE_TASK,
+    {
+      onCompleted({ createGroup }) {
+        props.setModal(false)
+      },
+      onError(e) {
+        window.alert(e)
+      }
+    })
   return (
     <MaskStyledWrapper>
       <ModalStyledWrapper>
@@ -181,7 +141,7 @@ const Modal = (props) => {
           </Form.Item>
           <Form.Item
             label="任務狀態"
-            name="description"
+            name="status"
             rules={[{ required: true, message: '請選擇任務狀態!' }]}
           >
             <Select
@@ -193,27 +153,20 @@ const Modal = (props) => {
               <Option value="2">Done</Option>
             </Select>
           </Form.Item>
-          <Form.Item
-            label="可見組合"
-            name="groups"
-            rules={[
-              {
-                required: true,
-                message: '請選擇可見組合!',
-                type: 'array',
-              },
-            ]}
-          >
-            <Select mode="multiple" placeholder="請選擇可見組合">
-              { props.groups && props.groups.map(g => (
-                  <Option value={g._id}>{g.name}</Option>
-                ))
-              }
-            </Select>
-          </Form.Item>
 
           <Form.Item wrapperCol={{ offset: 8, span: 8 }}>
-            <Button type="primary" htmlType="submit" onClick={addTask}>
+            <Button type="primary" htmlType="submit" onClick={() => {
+              console.log(inputs.status)
+              addTask({
+                variables: {
+                  createdBy: localStorage.getItem('userId'),
+                  title: inputs.form_title,
+                  description: inputs.form_description,
+                  status: Number(inputs.status),
+                  groups: [...props.user.groups.map(g => g._id)]
+                }
+              })
+            }}>
               新增任務
             </Button>
           </Form.Item>
@@ -230,29 +183,73 @@ export default function TaskListView() {
 
   const [isShowModal, setModal] = useState(false)
 
+  // const { data, loading, error } = useQuery(GET_TASKS)
+  const { data: userData, loading, error } = useQuery(GET_USER, {
+    variables: { id: localStorage.getItem('userId') },
+  })
+  // if (loading) return 'Loading...'
+  // if (error) {
+  //   window.alert(error)
+  // }
+  // const { tasks } = data
+  if (loading) return 'Loading...'
+  if (error) {
+    window.alert(error)
+  }
+
+  const { user } = userData
+  const tasks = _.flatten(user.groups.map(group => group.tasks))
+
+  let taskGroups = {
+    [0]: [],
+    [1]: [],
+    [2]: []
+  }
+
+
+
+  taskGroups = {
+    ...taskGroups,
+    ..._.groupBy(tasks, task => task.status)
+  }
+
+
   return (
     <ContentViewContainer>
       {
         isShowModal && (
-          <Modal setModal={setModal} />
+          <Modal user={user} setModal={setModal} />
         )
       }
       <PageTitle {..._.find(navLinks, {
         to
       })} />
-      <Groups groups={[{ name: 'group1' }, { name: 'group2' }]} />
+      <Groups groups={user.groups} />
       <ScrollContainer>
-        <Col>
-          <TodoLabel>
-            Todo
-          </TodoLabel>
-          <TaskCard title="title1" />
-          <PlusButton status={0} setModal={setModal} />
-        </Col>
-        <Col>
-          <ProgressLabel>
-            Progress
-          </ProgressLabel>
+        {
+          Object.values(taskGroups).map(
+            (tasks, index) => (
+              <Col key={'col' + index}>
+                {index === 0 && <TodoLabel>
+                  Todo
+                </TodoLabel>}
+                {index === 1 && <ProgressLabel>
+                  Progress
+                </ProgressLabel>}
+                {index === 2 && <DoneLabel>
+                  Done
+                </DoneLabel>}
+                {
+                  tasks.map(task => (<TaskCard key={task._id} title={task.title} />))
+                }
+
+                <PlusButton status={index} setModal={setModal} />
+              </Col>
+            ))
+        }
+
+        {/* <Col>
+
           <TaskCard title="title2" />
           <PlusButton status={1} setModal={setModal} />
         </Col>
@@ -262,7 +259,7 @@ export default function TaskListView() {
           </DoneLabel>
           <TaskCard title="title3" />
           <PlusButton status={2} setModal={setModal} />
-        </Col>
+        </Col> */}
       </ScrollContainer>
     </ContentViewContainer>
   )

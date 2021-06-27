@@ -1,8 +1,8 @@
-import { useState, lazy, Suspense } from "react"
+import { lazy, Suspense } from "react"
 import { BrowserRouter, Switch, Route, Redirect } from 'react-router-dom'
 import { hot } from 'react-hot-loader'
 
-import tw from "tailwind-styled-components"
+// import tw from "tailwind-styled-components"
 import styled, { css } from "styled-components"
 import { Spin as Loading } from 'antd'
 
@@ -49,9 +49,15 @@ function App() {
     ${fontStyle}
   `
 
-  const Fallback = () => (
-    <Loading />
-  )
+  const Fallback = styled(Loading)`
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    left: 0;
+    right: 0;
+    margin: 0 auto;
+    width: 100px;
+  `
 
   return (
     <>

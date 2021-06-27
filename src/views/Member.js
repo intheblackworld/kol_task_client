@@ -1,13 +1,14 @@
 import { useState, useCallback } from 'react'
 import { useLocation } from 'react-router-dom'
+import { useMutation, useQuery } from "@apollo/client"
 import { Form, Input, Button, Select } from 'antd'
 import _ from 'lodash'
 
 import PageTitle from '../components/Page/Title'
-import { TodoLabel, ProgressLabel, DoneLabel } from '../components/Label/index'
 import { navLinks } from '../constants/route'
 import { Roles } from '../constants/index'
 import { ContentViewContainer } from '../style/index'
+import { CREATE_GROUP, CREATE_USER, GET_USER, GET_USERS, GET_GROUPS, ADD_GROUP_TO_USER } from '../graphql/gql'
 
 import styled from 'styled-components'
 
@@ -38,7 +39,7 @@ const UserTitleStyledWrapper = styled.div`
   color: #999;
   ${flex_c}
 
-  div {
+  > div {
     width: 25%;
     padding-left: var(--app--space--2);
     box-shadow: rgb(15 15 15 / 10%) 0px 0px 0px 1px;
@@ -65,7 +66,7 @@ const UserCardStyledWrapper = styled.div`
       background-color: var(--app--color--gray-lightest);
     }
 
-    div {
+    > div {
       width: 25%;
       box-shadow: rgb(15 15 15 / 10%) 0px 0px 0px 1px;
       padding-left: var(--app--space--2);
@@ -79,26 +80,53 @@ const UserCardStyledWrapper = styled.div`
       text-overflow: ellipsis;
     }
   `
-const UserCard = ({
-  name,
-  email,
-  role,
-  groups
-}) => {
+const UserCard = (props) => {
+  const [addGroupToUser, { loading, error }] = useMutation(ADD_GROUP_TO_USER,
+    {
+      onCompleted({ addGroupToUser }) {
+        let newGroups = addGroupToUser()
+      },
+      onError(e) {
+        window.alert(e)
+      }
+    })
+  const handleChange = (value) => {
+    addGroupToUser({
+      variables: {
+        userId: localStorage.getItem('userId'),
+        groupId: value[value.length - 1],
+      }
+    })
+  }
 
   return (
     <UserCardStyledWrapper>
       <div>
-        {name}
+        {props.name}
       </div>
       <div>
-        {email}
+        {props.email}
       </div>
       <div>
-        {Roles[role]}
+        {Roles[props.role]}
       </div>
       <div>
-        {/* {groups} */}
+        <Select
+          mode="multiple"
+          allowClear
+          style={{ width: '100%' }}
+          placeholder="請添加組合"
+          onChange={handleChange}
+          defaultValue={[...props.groups.map(g => g._id)]}
+        >
+          {
+            props.allGroups.groups.map(g => (
+              <Option value={g._id} key={g._id}>
+                {g.name}
+              </Option>
+            ))
+          }
+        </Select>
       </div>
     </UserCardStyledWrapper>
   )
@@ -165,9 +193,15 @@ const GroupModal = (props) => {
     setName(e.target.value)
   }
 
-  const addGroup = () => {
-    props.setModal(false)
-  }
+  const [addGroup, { loading, error }] = useMutation(CREATE_GROUP,
+    {
+      onCompleted({ createGroup }) {
+        props.setModal(false)
+      },
+      onError(e) {
+        window.alert(e)
+      }
+    })
   return (
     <MaskStyledWrapper>
       <ModalStyledWrapper>
@@ -189,7 +223,12 @@ const GroupModal = (props) => {
           </Form.Item>
 
           <Form.Item wrapperCol={{ offset: 8, span: 8 }}>
-            <Button type="primary" htmlType="submit" onClick={addGroup}>
+            <Button type="primary" htmlType="submit" onClick={() => addGroup({
+              variables: {
+                createdBy: localStorage.getItem('userId'),
+                name,
+              }
+            })}>
               新增組合
             </Button>
           </Form.Item>
@@ -203,12 +242,23 @@ const Modal = (props) => {
   const [inputs, setInputs] = useState('')
 
   const onChangeHandler = useCallback(
-    ({ target: { id, value } }) => setInputs(state => ({ ...state, [id]: value }), [])
-  )
+    (e) => {
+      if (!e.target) {
+        setInputs(state => ({ ...state, role: e }))
+      } else {
+        setInputs(state => ({ ...state, [e.target.id]: e.target.value }))
+      }
+    }, [])
 
-  const addUser = () => {
-    props.setModal(false)
-  }
+  const [addUser, { loading, error }] = useMutation(CREATE_USER,
+    {
+      onCompleted({ createGroup }) {
+        props.setModal(false)
+      },
+      onError(e) {
+        window.alert(e)
+      }
+    })
   return (
     <MaskStyledWrapper>
       <ModalStyledWrapper>
@@ -240,7 +290,7 @@ const Modal = (props) => {
           </Form.Item>
           <Form.Item
             label="人員角色"
-            name="description"
+            name="role"
             rules={[{ required: true, message: '請選擇人員角色!' }]}
           >
             <Select
@@ -252,30 +302,21 @@ const Modal = (props) => {
               <Option value="3">網紅</Option>
             </Select>
           </Form.Item>
-          <Form.Item
-            label="所屬組合"
-            name="groups"
-            rules={[
-              {
-                required: true,
-                message: '請選擇所屬組合!',
-                type: 'array',
-              },
-            ]}
-          >
-            <Select mode="multiple" placeholder="請選擇所屬組合">
-              {props.groups && props.groups.map(g => (
-                <Option value={g._id}>{g.name}</Option>
-              ))
-              }
-            </Select>
-          </Form.Item>
 
           <Form.Item wrapperCol={{ offset: 8, span: 8 }}>
-            <Button type="primary" htmlType="submit" onClick={addUser}>
+            <Button type="primary" htmlType="submit" onClick={() => addUser({
+              variables: {
+                name: inputs.form_name,
+                email: inputs.form_email,
+                password: '000000',
+                role: Number(inputs.role),
+              }
+            })}>
               新增人員
             </Button>
           </Form.Item>
+          &nbsp;&nbsp;&nbsp;&nbsp;密碼預設：<br />
+          &nbsp;&nbsp;&nbsp;&nbsp;000000
         </Form>
       </ModalStyledWrapper>
     </MaskStyledWrapper>
@@ -289,6 +330,19 @@ export default function MemberView() {
 
   const [isShowModal, setModal] = useState(false)
   const [isShowGroupModal, setGroupModal] = useState(false)
+
+  const { data, loading, error } = useQuery(GET_USERS)
+  const { data: allGroups, loading: groupLoading, error: groupError } = useQuery(GET_GROUPS)
+
+  if (loading || groupLoading) return 'Loading...'
+  if (error) {
+    window.alert(error)
+  }
+
+  if (groupError) {
+    window.alert(groupError)
+  }
+
 
   return (
     <ContentViewContainer>
@@ -309,7 +363,12 @@ export default function MemberView() {
         <CreateUserButton setModal={setModal} />
         <CreateGroupButton setModal={setGroupModal} />
         <UserTitle />
-        <UserCard name="managermanagermanagermanager" email="m01@gmail.com" role={1} groups={[{ name: 'group0' }]} />
+        {
+          data.users.map(user => (
+            <UserCard key={user.name} {...user} allGroups={allGroups} />
+          ))
+        }
+
       </ScrollContainer>
     </ContentViewContainer>
   )

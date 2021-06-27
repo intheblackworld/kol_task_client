@@ -3,39 +3,10 @@ import { useHistory } from "react-router-dom"
 import { Form, Input, Button } from 'antd'
 import styled from "styled-components"
 import { responsiveSm } from '../utils/index'
-import { gql, useMutation } from "@apollo/client"
+import { useMutation } from "@apollo/client"
+import { LOGIN_USER } from '../graphql/gql'
 
 import RoutePath from '../constants'
-// import { isLoggedInVar } from '../cache/index'
-
-
-// import { LoginForm, Loading } from "../components"
-
-export const LOGIN_USER = gql`
-  mutation Login($email: String!) {
-    login(email: $email) {
-      id
-      token
-    }
-  }
-`
-
-// export default function Login() {
-//   const [login, { loading, error }] = useMutation(LOGIN_USER, {
-//     onCompleted({ login }) {
-//       if (login) {
-//         localStorage.setItem('token', login.token)
-//         localStorage.setItem('userId', login.id)
-//         // isLoggedInVar(true)
-//       }
-//     }
-//   })
-
-//   if (loading) return 'loading...'
-//   if (error) return <p>An error occurred</p>
-//   return <div>login</div>
-//   // return <LoginForm login={login} />
-// }
 
 
 const Root = styled.div`
@@ -45,15 +16,20 @@ const Root = styled.div`
   align-items: center;
   justify-content: center;
   background-color: var(--app--color--dark);
+  position: fixed;
+  z-index: 1000;
+  left: 0;
+  top: 0;
 `
 
 const Content = styled.div`
   width: 500px;
-  height: 300px;
+  height: 600px;
   background-color: #fff;
   display: flex;
   align-items: center;
   justify-content: center;
+  flex-wrap: wrap;
   ${responsiveSm`
     width: 95%;
     // margin: var(--app--space--4);
@@ -62,28 +38,25 @@ const Content = styled.div`
 
 export default function Login() {
   const [inputs, setInputs] = useState('')
+  const history = useHistory()
+  const [login, { loading, error }] = useMutation(LOGIN_USER,
+    {
+      onCompleted({ login }) {
+        if (login) {
+          localStorage.setItem('token', login.token)
+          localStorage.setItem('user', login._id)
+          localStorage.setItem('role', login.role)
+          localStorage.setItem('name', login.name)
+        }
+        history.push(RoutePath.TASKLIST)
+      },
+      onError(e) {
+        window.alert(e)
+      }
+    })
   const onChangeHandler = useCallback(
     ({ target: { id, value } }) => setInputs(state => ({ ...state, [id]: value }), [])
   )
-
-  const history = useHistory()
-
-  const login = () => {
-    // @TODO 登入實作
-    history.push(RoutePath.TASKLIST)
-    console.log(inputs.form_name, inputs.form_password)
-  }
-
-  // const onNameChange = (e) => {
-  //   const newName = e.target.value
-  //   setName(newName)
-  // }
-
-  // const onPasswordChange = (e) => {
-  //   const newPassword = e.target.value
-  //   setPassword(newPassword)
-  // }
-
   return (
     <Root>
       <Content>
@@ -94,12 +67,12 @@ export default function Login() {
           initialValues={{ remember: true }}
         >
           <Form.Item
-            label="帳號"
-            name="name"
-            rules={[{ required: true, message: '請輸入帳號!' }]}
+            label="信箱"
+            name="email"
+            rules={[{ required: true, message: '請輸入信箱!' }]}
           >
             <Input
-              value={inputs.name}
+              value={inputs.form_email}
               onChange={onChangeHandler}
             />
           </Form.Item>
@@ -110,16 +83,30 @@ export default function Login() {
             rules={[{ required: true, message: '請輸入密碼!' }]}
           >
             <Input.Password
-              value={inputs.password}
+              value={inputs.form_password}
               onChange={onChangeHandler}
             />
           </Form.Item>
 
           <Form.Item wrapperCol={{ offset: 8, span: 8 }}>
-            <Button type="primary" htmlType="submit" onClick={login}>
+            <Button type="primary" htmlType="submit" onClick={() => login({
+              variables: {
+                email: inputs.form_email,
+                password: inputs.form_password
+              }
+            })}>
               登入
             </Button>
           </Form.Item>
+          <div>
+            主管信箱密碼：<br />
+            manager0@gmail.com<br />
+            000000<br /><br />
+            員工信箱密碼：<br />
+            employee01@gmail.com<br />
+            000000<br /><br />
+            網紅信箱密碼
+          </div>
         </Form>
       </Content>
     </Root>

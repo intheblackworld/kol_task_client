@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useCallback } from 'react'
 
 export const useInput = ({ type }) => {
   const [value, setValue] = useState("")
