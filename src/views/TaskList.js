@@ -156,7 +156,6 @@ const Modal = (props) => {
 
           <Form.Item wrapperCol={{ offset: 8, span: 8 }}>
             <Button type="primary" htmlType="submit" onClick={() => {
-              console.log(inputs.status)
               addTask({
                 variables: {
                   createdBy: localStorage.getItem('userId'),
