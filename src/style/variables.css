@@ -1,0 +1,97 @@
+:root {
+  /* Color */
+  --app--color--primary: rgb(166, 0, 86);
+  --app--color--primary-magnenta: rgb(255, 51, 165);
+  --app--color--primary-gradient: linear-gradient( to bottom, var(--app--color--primary-magnenta), var(--app--color--primary));
+  --app--color--secondary: rgb(65, 241, 199);
+  --app--color--secondary-gradient: linear-gradient(to top, #40daef, #1fc6a8);
+  --app--color--green: rgb(0, 178, 136);
+  --app--color--green--l-5: rgb(0, 204, 155);
+  --app--color--green--o-4: rgba(0, 204, 155, 0.4);
+  --app--color--green-lighter: rgb(65, 241, 199);
+  --app--color--green-lightest: rgb(56, 220, 181);
+  --app--color--green-darker: rgb(0, 178, 136);
+  --app--color--green-darker--o-4: rgba(0, 178, 136, 0.4);
+  --app--color--green-darker--o-2: rgba(0, 178, 136, 0.2);
+  --app--color--red: rgb(255, 26, 108);
+  --app--color--red--l-5: rgb(255, 51, 124);
+  --app--color--red--o-4: rgba(255, 26, 108, 0.4);
+  --app--color--orange: rgb(252, 62, 62);
+  --app--color--orange--l-5: rgb(252, 79, 79);
+  --app--color--orange--o-4: rgba(252, 62, 62, 0.4);
+  --app--color--orange--o-2: rgba(252, 62, 62, 0.2);
+  --app--color--yellow: rgb(48, 44, 38);
+  --app--color--yellow--l-5: rgb(246, 172, 60);
+  --app--color--yellow--o-4: rgba(243, 152, 15, 0.4);
+  --app--color--yellow--o-2: rgba(243, 152, 15, 0.2);
+  --app--color--blue: rgb(0, 133, 255);
+  --app--color--blue--l-5: rgb(26, 145, 255);
+  --app--color--blue--o-4: rgba(0, 133, 255, 0.4);
+  --app--color--blue--o-2: rgba(0, 133, 255, 0.2);
+  --app--color--blue-grey: rgb(141, 154, 169);
+  --app--color--dark-darkest: rgb(8, 13, 22);
+  --app--color--dark-darkest--o-2: rgba(8, 13, 22, 0.2);
+  --app--color--dark-darker: rgb(24, 25, 38);
+  --app--color--dark-darker--l-5: rgb(34, 35, 53);
+  --app--color--dark: rgb(38, 40, 54);
+  --app--color--dark--o-2: rgba(76, 89, 108, 0.2);
+  --app--color--dark-lighter: rgb(53, 62, 75);
+  --app--color--dark-lighter--l-5: rgb(63, 74, 90);
+  --app--color--dark-lighter--o-4: rgba(53, 62, 75, 0.4);
+  --app--color--dark-lighter--o-2: rgba(53, 62, 75, 0.2);
+  --app--color--grey: rgb(84, 84, 84);
+  --app--color--grey-lighter: rgb(139, 139, 139);
+  --app--color--grey-lightest: rgb(222, 222, 222);
+  --app--color--white: rgb(255, 255, 255);
+  --app--color--white--o-7: rgba(255, 255, 255, 0.7);
+  --app--color--white--o-4: rgba(255, 255, 255, 0.4);
+  --app--color--white--o-2: rgba(255, 255, 255, 0.2);
+  --app--color--white--o-1: rgba(255, 255, 255, 0.1);
+  --app--color--black: rgba(0, 0, 0, 0.8);
+  --app--color--coin--twd: var(--app--color--primary-magnenta);
+  --app--color--coin--usdt: #23ad86;
+  --app--color--coin--eth: #627eea;
+  
+  /* Font */
+  --app--font--family: 'Noto Sans TC', -apple-system, blinkmacsystemfont, 'Roboto', 'Helvetica Neue', sans-serif;
+  --app--font--hero: normal 800 40px 'Noto Sans TC';
+  --app--font--h1: normal bold 28px 'Noto Sans TC';
+  --app--font--h2: normal bold 20px 'Noto Sans TC';
+  --app--font--h3: normal 600 18px 'Noto Sans TC';
+  --app--font--h4: normal 600 16px 'Noto Sans TC';
+  --app--font--paragraph-1: normal normal 16px 'Noto Sans TC';
+  --app--font--paragraph-2: normal normal 14px 'Noto Sans TC';
+  --app--font--label-1: normal normal 12px 'Noto Sans TC';
+  --app--font--label-2: normal normal 10px 'Noto Sans TC';
+  
+  /* Space */
+  --app--space--1: 4px;
+  --app--space--2: calc(var(--app--space--1) * 2);
+  --app--space--3: calc(var(--app--space--1) * 3);
+  --app--space--4: calc(var(--app--space--1) * 4);
+  --app--space--5: calc(var(--app--space--1) * 5);
+  --app--space--6: calc(var(--app--space--1) * 6);
+  --app--space--7: calc(var(--app--space--1) * 7);
+  --app--space--8: calc(var(--app--space--1) * 8);
+  --app--space--9: calc(var(--app--space--1) * 9);
+  --app--space--10: calc(var(--app--space--1) * 10);
+  --app--space--11: calc(var(--app--space--1) * 11);
+  --app--space--12: calc(var(--app--space--1) * 12);
+  --app--space--14: calc(var(--app--space--1) * 14);
+  --app--space--15: calc(var(--app--space--1) * 15);
+  --app--space--16: calc(var(--app--space--1) * 16);
+  --app--space--18: calc(var(--app--space--1) * 18);
+  --app--space--19: calc(var(--app--space--1) * 19);
+  --app--space--25: calc(var(--app--space--1) * 25);
+  --app--space--26: calc(var(--app--space--1) * 26);
+  --app--space--29: calc(var(--app--space--1) * 29);
+  --app--space--30: calc(var(--app--space--1) * 30);
+  --app--space--40: calc(var(--app--space--1) * 40);
+  --app--space--100: calc(var(--app--space--1) * 100);
+  
+  /* Radius */
+  --app--radius--1: 2px;
+  --app--radius--2: 4px;
+  --app--radius--4: 8px;
+  --app--radius--24: 48px;
+}
