@@ -2,7 +2,11 @@
   /* Color */
   --app--color--primary: rgb(166, 0, 86);
   --app--color--primary-magnenta: rgb(255, 51, 165);
-  --app--color--primary-gradient: linear-gradient( to bottom, var(--app--color--primary-magnenta), var(--app--color--primary));
+  --app--color--primary-gradient: linear-gradient(
+    to bottom,
+    var(--app--color--primary-magnenta),
+    var(--app--color--primary)
+  );
   --app--color--secondary: rgb(65, 241, 199);
   --app--color--secondary-gradient: linear-gradient(to top, #40daef, #1fc6a8);
   --app--color--green: rgb(0, 178, 136);
@@ -28,7 +32,7 @@
   --app--color--blue--l-5: rgb(26, 145, 255);
   --app--color--blue--o-4: rgba(0, 133, 255, 0.4);
   --app--color--blue--o-2: rgba(0, 133, 255, 0.2);
-  --app--color--blue-grey: rgb(141, 154, 169);
+  --app--color--blue-grey: rgb(187, 208, 231);
   --app--color--dark-darkest: rgb(8, 13, 22);
   --app--color--dark-darkest--o-2: rgba(8, 13, 22, 0.2);
   --app--color--dark-darker: rgb(24, 25, 38);
@@ -39,9 +43,10 @@
   --app--color--dark-lighter--l-5: rgb(63, 74, 90);
   --app--color--dark-lighter--o-4: rgba(53, 62, 75, 0.4);
   --app--color--dark-lighter--o-2: rgba(53, 62, 75, 0.2);
-  --app--color--grey: rgb(84, 84, 84);
-  --app--color--grey-lighter: rgb(139, 139, 139);
-  --app--color--grey-lightest: rgb(222, 222, 222);
+  --app--color--gray: rgb(84, 84, 84);
+  --app--color--gray-lighter: rgb(139, 139, 139);
+  --app--color--gray-lighter2: rgb(220, 220, 220);
+  --app--color--gray-lightest: rgb(247, 246, 242);
   --app--color--white: rgb(255, 255, 255);
   --app--color--white--o-7: rgba(255, 255, 255, 0.7);
   --app--color--white--o-4: rgba(255, 255, 255, 0.4);
@@ -51,19 +56,20 @@
   --app--color--coin--twd: var(--app--color--primary-magnenta);
   --app--color--coin--usdt: #23ad86;
   --app--color--coin--eth: #627eea;
-  
+
   /* Font */
-  --app--font--family: 'Noto Sans TC', -apple-system, blinkmacsystemfont, 'Roboto', 'Helvetica Neue', sans-serif;
-  --app--font--hero: normal 800 40px 'Noto Sans TC';
-  --app--font--h1: normal bold 28px 'Noto Sans TC';
-  --app--font--h2: normal bold 20px 'Noto Sans TC';
-  --app--font--h3: normal 600 18px 'Noto Sans TC';
-  --app--font--h4: normal 600 16px 'Noto Sans TC';
-  --app--font--paragraph-1: normal normal 16px 'Noto Sans TC';
-  --app--font--paragraph-2: normal normal 14px 'Noto Sans TC';
-  --app--font--label-1: normal normal 12px 'Noto Sans TC';
-  --app--font--label-2: normal normal 10px 'Noto Sans TC';
-  
+  --app--font--family: "Noto Sans TC", -apple-system, blinkmacsystemfont,
+    "Roboto", "Helvetica Neue", sans-serif;
+  --app--font--hero: normal 800 40px "Noto Sans TC";
+  --app--font--h1: normal bold 28px "Noto Sans TC";
+  --app--font--h2: normal bold 20px "Noto Sans TC";
+  --app--font--h3: normal 600 18px "Noto Sans TC";
+  --app--font--h4: normal 600 16px "Noto Sans TC";
+  --app--font--paragraph-1: normal normal 16px "Noto Sans TC";
+  --app--font--paragraph-2: normal normal 14px "Noto Sans TC";
+  --app--font--label-1: normal normal 12px "Noto Sans TC";
+  --app--font--label-2: normal normal 10px "Noto Sans TC";
+
   /* Space */
   --app--space--1: 4px;
   --app--space--2: calc(var(--app--space--1) * 2);
@@ -88,7 +94,7 @@
   --app--space--30: calc(var(--app--space--1) * 30);
   --app--space--40: calc(var(--app--space--1) * 40);
   --app--space--100: calc(var(--app--space--1) * 100);
-  
+
   /* Radius */
   --app--radius--1: 2px;
   --app--radius--2: 4px;

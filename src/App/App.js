@@ -12,7 +12,7 @@ import Container from '../components/Container'
 
 import RoutePath from '../constants'
 
-import { fontStyle, rootStyle, routeViewContainerStyle } from '../style/index'
+import { fontStyle, rootStyle, wrapViewContainerStyle } from '../style/index'
 import '../style/antd.less'
 import '../style/variables.css'
 
@@ -25,13 +25,13 @@ const Root = styled.div`
   ${rootStyle}
 `
 
-const RouteViewContainer = styled(Container)`
-  ${routeViewContainerStyle}
+const WrapViewContainer = styled(Container)`
+  ${wrapViewContainerStyle}
 `
 
 function Wrapper() {
   return (
-    <RouteViewContainer className="flex-1">
+    <WrapViewContainer className="flex-1">
       <SidebarContainer>
       </SidebarContainer>
       <Switch>
@@ -40,7 +40,7 @@ function Wrapper() {
         <Route path={RoutePath.TASKDETAIL} component={TaskDetailView} />
         <Redirect to={RoutePath.LOGIN} />
       </Switch>
-    </RouteViewContainer >
+    </WrapViewContainer >
   )
 }
 
@@ -52,10 +52,6 @@ function App() {
   const Fallback = () => (
     <Loading />
   )
-  // const inited = useInitedState()
-  // if (!inited) {
-  //   return <Loading />
-  // }
 
   return (
     <>

@@ -1,4 +1,3 @@
-import { useState, useLayoutEffect } from 'react'
 import {
   css
 } from 'styled-components'
@@ -16,18 +15,7 @@ export const Breakpoint = {
   LG: LG_WIDTH,
   XL: XL_WIDTH,
 }
-/**
- * @example
- * import styled from 'styled-components'
- *
- * const StyledComp = styled.div`
- *    color: red;
- *
- *    ${responsiveSm`
- *       color: blue;
- *    `}
- * `
- */
+
 export function responsiveXs(
   template,
   ...args
