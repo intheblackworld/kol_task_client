@@ -1,6 +1,6 @@
 const antdCustomStyle = require('./src/theme/antd')
 const CracoLessPlugin = require('craco-less')
-const reactHotReloadPlugin = require('craco-plugin-react-hot-reload')
+const FastRefreshCracoPlugin = require('craco-fast-refresh')
 
 
 module.exports = {
@@ -12,9 +12,14 @@ module.exports = {
       ]
     }
   },
+  resolve: {
+    alias: {
+      'react-dom': '@hot-loader/react-dom',
+    },
+  },
   plugins: [
     {
-      plugin: reactHotReloadPlugin
+      plugin: FastRefreshCracoPlugin
     },
     {
       plugin: CracoLessPlugin,

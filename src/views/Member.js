@@ -108,7 +108,7 @@ const UserCard = (props) => {
         {props.email}
       </div>
       <div>
-        {Roles[props.role]}
+        {Roles[props.role - 1]}
       </div>
       <div>
         <Select

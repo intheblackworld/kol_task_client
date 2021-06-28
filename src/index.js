@@ -2,7 +2,7 @@ import React from 'react'
 import ReactDOM from 'react-dom'
 import { ApolloClient, ApolloProvider, createHttpLink, gql, from, HttpLink } from "@apollo/client"
 import { onError } from "@apollo/client/link/error"
-import { setContext } from '@apollo/client/link/context';
+import { setContext } from '@apollo/client/link/context'
 
 
 
@@ -36,7 +36,7 @@ const httpLink = new HttpLink({
 
 const authLink = setContext((_, { headers }) => {
   // get the authentication token from local storage if it exists
-  const token = localStorage.getItem('token');
+  const token = localStorage.getItem('token')
   // return the headers to the context so httpLink can read them
   return {
     headers: {
@@ -44,7 +44,7 @@ const authLink = setContext((_, { headers }) => {
       authorization: token ? `Bearer ${token}` : "",
     }
   }
-});
+})
 
 const client = new ApolloClient({
   uri: 'http://localhost:4000/graphql',  //指定API網址
